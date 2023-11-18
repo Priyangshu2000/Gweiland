@@ -77,6 +77,11 @@ public class cryptocoinsAdapter extends RecyclerView.Adapter<cryptocoinsAdapter.
             String delta=details.getCoinDelta()+"%";
             holder.coinDelta.setText(delta);
         }else{
+
+            if (details.getCoinDelta().charAt(0) == '-') {
+                details.setCoinDelta(details.getCoinDelta().substring(1));
+            }
+
             String delta="+"+details.getCoinDelta()+"%";
             holder.coinDelta.setText(delta);
             holder.coinGraph.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.positive));

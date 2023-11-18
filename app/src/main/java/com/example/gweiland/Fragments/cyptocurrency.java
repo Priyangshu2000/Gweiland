@@ -126,7 +126,7 @@ public class cyptocurrency extends Fragment {
 
         adapter.notifyDataSetChanged();
 
-        if(Constant.coins.size()>0)
+        if (Constant.coins.size() > 0)
             setBTC();
     }
 
@@ -143,6 +143,9 @@ public class cyptocurrency extends Fragment {
             btcDelta.setTextColor(getContext().getColor(R.color.negative));
             btcGraph.setColorFilter(R.color.negative);
         } else {
+            if (Constant.coins.get(0).getCoinDelta().charAt(0) == '-') {
+                Constant.coins.get(0).setCoinDelta(Constant.coins.get(0).getCoinDelta().substring(1));
+            }
             String delta = "+" + Constant.coins.get(0).getCoinDelta() + "%";
             btcDelta.setText(delta);
         }
