@@ -124,6 +124,8 @@ public class cyptocurrency extends Fragment {
             Constant.coins.add(coin);
         }
 
+        adapter.notifyDataSetChanged();
+
         if(Constant.coins.size()>0)
             setBTC();
     }
@@ -242,6 +244,5 @@ public class cyptocurrency extends Fragment {
         };
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(manager);
-        adapter.notifyDataSetChanged();
     }
 }
