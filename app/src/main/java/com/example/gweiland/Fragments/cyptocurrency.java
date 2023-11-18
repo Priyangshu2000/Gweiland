@@ -45,41 +45,42 @@ public class cyptocurrency extends Fragment {
     ArrayList<CoinDetails> coins;
 
 
-    TextView btcPrice,btcDelta;
-    ImageView btcGraph,btcIcon;
+    TextView btcPrice, btcDelta;
+    ImageView btcGraph, btcIcon;
 
     @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Bundle bundle = getArguments();
-        String message = bundle.getString("Tag");
+        String message;
+        assert bundle != null;
+        message = bundle.getString("Tag");
 
 
         View view = inflater.inflate(R.layout.fragment_cyptocurrency, container, false);
         recyclerView = view.findViewById(R.id.crypto_recycler);
 
-        btcPrice=view.findViewById(R.id.btc_price);
-        btcDelta=view.findViewById(R.id.btc_delta);
-        btcGraph=view.findViewById(R.id.btc_graph);
-        btcIcon=view.findViewById(R.id.btc_icon);
-
-
+        btcPrice = view.findViewById(R.id.btc_price);
+        btcDelta = view.findViewById(R.id.btc_delta);
+        btcGraph = view.findViewById(R.id.btc_graph);
+        btcIcon = view.findViewById(R.id.btc_icon);
 
 
         coins = new ArrayList<>();
-        fetchCoins(message);
+        if (message != null)
+            fetchCoins(message);
 
         return view;
     }
 
     private void fetchCoins(String tag) {
 
-        if(!tag.isEmpty()){
-            tag="&sort="+tag;
+        if (!tag.isEmpty()) {
+            tag = "&sort=" + tag;
         }
 
-        String url = Constant.COIN_URL + "?CMC_PRO_API_KEY=" + Constant.API_KEY + "&limit=20"+tag;
+        String url = Constant.COIN_URL + "?CMC_PRO_API_KEY=" + Constant.API_KEY + "&limit=20" + tag;
 
         getData(url);
 
@@ -118,25 +119,32 @@ public class cyptocurrency extends Fragment {
         String logo = zerothObject.getString("logo");
 
         coin.setCoinIcon(logo);
-        if(coin.getCoinAbbreviation().equals("BTC")){
-
-            NumberFormat numberFormat=NumberFormat.getInstance(Locale.US);
-            String price="$"+numberFormat.format(Double.valueOf(coin.getCoinPrice()))+" USD";
-
-            btcPrice.setText(price);
-
-
-            if(Double.parseDouble(coin.getCoinDelta())<0){
-                String delta=coin.getCoinDelta()+"%";
-                btcDelta.setText(delta);
-                btcDelta.setTextColor(getContext().getColor(R.color.negative));
-                btcGraph.setColorFilter(R.color.negative);
-            }else{
-                String delta="+"+coin.getCoinDelta()+"%";
-                btcDelta.setText(delta);
-            }
-            Picasso.get().load(coin.getCoinIcon()).into(btcIcon);
+        if (coin.getCoinAbbreviation().equals("BTC")) {
+            Constant.coins.clear();
+            Constant.coins.add(coin);
         }
+
+        if(Constant.coins.size()>0)
+            setBTC();
+    }
+
+    private void setBTC() {
+        NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+        String price = "$" + numberFormat.format(Double.valueOf(Constant.coins.get(0).getCoinPrice())) + " USD";
+
+        btcPrice.setText(price);
+
+
+        if (Double.parseDouble(Constant.coins.get(0).getCoinDelta()) < 0) {
+            String delta = Constant.coins.get(0).getCoinDelta() + "%";
+            btcDelta.setText(delta);
+            btcDelta.setTextColor(getContext().getColor(R.color.negative));
+            btcGraph.setColorFilter(R.color.negative);
+        } else {
+            String delta = "+" + Constant.coins.get(0).getCoinDelta() + "%";
+            btcDelta.setText(delta);
+        }
+        Picasso.get().load(Constant.coins.get(0).getCoinIcon()).into(btcIcon);
     }
 
 
@@ -200,10 +208,10 @@ public class cyptocurrency extends Fragment {
             public void onResponse(String response) {
 
                 try {
-                    formatCoin(coins.get(position),response.toString());
-                    if(position<19){
-                    getIcon(position+1);}
-                    else{
+                    formatCoin(coins.get(position), response.toString());
+                    if (position < 19) {
+                        getIcon(position + 1);
+                    } else {
 //                        loadRecycler();
                     }
                 } catch (Exception e) {
